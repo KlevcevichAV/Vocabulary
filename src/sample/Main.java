@@ -4,21 +4,17 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import sample.vocabulary.DataBase;
 import sample.vocabulary.Word;
-
+// переписать функции, чтобы добавление было как в конструкторе.
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        Word word = new Word("1","2","qwe\nqew\nwqeqeweqw", "qwe\nqew\nwqeqeweqw");
         DataBase dataBase = new DataBase();
         System.out.println(142);
-        //        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-//        primaryStage.setTitle("Hello World");
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
-//        DataBase dataBase = new DataBase("Hi","Hello", "Привет","Здравствуйте");
-//        dataBase.clear();
-//        dataBase.add("Hi","Hello", "Привет","Здравствуйте");
+//        dataBase.add("Hi","Helo", "Привет","Здравствуйте");
+        Word word = new Word("Hi","Helo", "Привет","Здравствуйте");
+        Word word1 = new Word("Hi","Hello", "Привет","Здравствуйте");
+        dataBase.edit(word, word1);
         System.exit(0);
     }
 

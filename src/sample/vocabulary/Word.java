@@ -51,11 +51,19 @@ public class Word {
         return wordInRu;
     }
 
-    public ArrayList<String> getSynonymForEn() {
-        return synonymForEn;
+    public String getSynonymForEn() {
+        StringBuilder result = new StringBuilder();
+        for (String word: synonymForEn) {
+            result.append(word);
+        }
+        return result.toString();
     }
 
-    public ArrayList<String> getSynonymForRu() {
-        return synonymForRu;
+    public String getSynonymForRu() {
+        StringBuilder result = new StringBuilder();
+        for (String word: synonymForRu) {
+            result.append(word);
+        }
+        return result.toString();
     }
 }
