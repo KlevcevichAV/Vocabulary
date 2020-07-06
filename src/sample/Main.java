@@ -12,8 +12,8 @@ public class Main extends Application {
         DataBase dataBase = new DataBase();
         System.out.println(142);
 //        dataBase.add("Hi","Helo", "Привет","Здравствуйте");
-        Word word = new Word("Hi","Helo", "Привет","Здравствуйте");
-        Word word1 = new Word("Hi","Hello", "Привет","Здравствуйте");
+        Word word = new Word("hi","привет", "hello","здравствуйте");
+        Word word1 = new Word("Hi","Привет", "Hello","Здравствуйте");
         dataBase.edit(word, word1);
         System.exit(0);
     }

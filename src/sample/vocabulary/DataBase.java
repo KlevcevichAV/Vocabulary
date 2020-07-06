@@ -52,17 +52,17 @@ public class DataBase {
                     check = true;
                 }
                 System.out.println(resultSet.getInt(1));
-                dataBase.add(new Word(resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getString(5)));
+                dataBase.add(new Word(resultSet.getString(2), resultSet.getString(4), resultSet.getString(3), resultSet.getString(5)));
             }
             System.out.println("We're created database.");
         }
     }
 
-    public void add(String wordInEn, String synonymForEn, String wordInRu, String synonymForRu) throws SQLException, ClassNotFoundException {
+    public void add(Word word) throws SQLException, ClassNotFoundException {
         Connection connection = DriverManager.getConnection(url, p);
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate("insert into vocabulary (wordInEn,synonymForEn,wordInRu,synonymForRu) values (" + attributePreparation(wordInEn) + ',' + attributePreparation(synonymForEn) + ',' + attributePreparation(wordInRu) + ',' + attributePreparation(synonymForRu) + ");");
-            dataBase.add(new Word(wordInEn, synonymForEn, wordInRu, synonymForRu));
+            statement.executeUpdate("insert into vocabulary (wordInEn,synonymForEn,wordInRu,synonymForRu) values (" + attributePreparation(word.getWordInEn()) + ',' + attributePreparation(word.getSynonymForEn()) + ',' + attributePreparation(word.getWordInRu()) + ',' + attributePreparation(word.getSynonymForRu()) + ");");
+            dataBase.add(word);
             System.out.println("We're added.");
         }
     }
@@ -81,18 +81,20 @@ public class DataBase {
         }
     }
 
-//    UPDATE employee_data SET
-//            salary=220000, perks=55000
-//    WHERE title='директор';
-
     public void edit(Word oldWord, Word newWord) throws SQLException {
         Connection connection = DriverManager.getConnection(url, p);
         try (Statement statement = connection.createStatement()) {
             for(int i = 0; i < dataBase.size(); i++){
                 if(equals(oldWord, dataBase.get(i))){
                     dataBase.set(i, newWord);
-                    statement.executeUpdate("update vocabulary set wordInEn=" + newWord.getWordInEn()+ " wordInRu=" + attributePreparation(newWord.getWordInRu())+ " synonymForEn=" + attributePreparation(newWord.getSynonymForEn()) + " synonymForRu=" + attributePreparation(newWord.getSynonymForRu()) + "where id=" + attributePreparation(Integer.toString(start + i)) + ';');
-                    System.out.println("We're deleted.");
+                    int id = start + i;
+                    String operation = "update vocabulary set wordInRu = " + attributePreparation(newWord.getWordInRu()) + ','
+                            + "wordInEn = " + attributePreparation(newWord.getWordInEn()) + ',' +
+                            "synonymForEn = " + attributePreparation(newWord.getSynonymForEn()) + ',' +
+                            "synonymForRu = " + attributePreparation(newWord.getSynonymForRu()) +
+                            "where id = " + id +';';
+                    statement.executeUpdate(operation);
+                    System.out.println("We're edited.");
                     return;
                 }
             }
