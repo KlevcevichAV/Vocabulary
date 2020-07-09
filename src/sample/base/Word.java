@@ -1,4 +1,4 @@
-package sample.vocabulary;
+package sample.base;
 
 import java.util.ArrayList;
 
