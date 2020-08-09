@@ -2,7 +2,6 @@ package sample;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import sample.base.DataBase;
 import sample.base.Word;
 
 import java.util.ArrayList;
@@ -21,14 +20,7 @@ public class Main extends Application {
         database.add(word);
         word = new Word("Hello", "Здравствуйте");
         database.add(word);
-//        for(int i = 0; i < database.size(); i++){
-//            for(int j = 0; j < database.size(); j++){
-//                database.get(i).addSynonym(database.get(j));
-//            }
-//        }
-//        Word word1 = new Word("Hi","Привет", "Hello","Здравствуйте");
-//        dataBase.edit(word, word1);
-//        System.exit(0);
+
         Controller controller = new Controller(primaryStage);
     }
 
