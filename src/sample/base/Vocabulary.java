@@ -32,6 +32,10 @@ public class Vocabulary {
         return false;
     }
 
+    public List<Word> getVocabulary(){
+        return vocabulary;
+    };
+
     private String attributePreparation(String attribute) {
         return '\'' + attribute + '\'';
     }
