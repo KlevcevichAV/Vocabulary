@@ -8,7 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sample.base.DataBase;
 import sample.base.Vocabulary;
@@ -17,6 +19,8 @@ import sample.view.WordTable;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ControllerMainWindow {
     @FXML
@@ -33,28 +37,23 @@ public class ControllerMainWindow {
 
     @FXML
     void initialize(){
-        showWords.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                Label secondLabel = new Label("I'm a Label on new Window");
-
-//                StackPane secondaryLayout = new StackPane();
-//                secondaryLayout.getChildren().add(secondLabel);
-                Parent root = null;
-                try {
-                    root = FXMLLoader.load(getClass().getResource("/home/sanchir/IdeaProjects/Vocabulary/src/sample/words.fxml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if(root != null){
-                    System.out.println(12);
-                    Scene secondScene = new Scene(root, 230, 100);
-                    Stage newWindow = new Stage();
-                    newWindow.setTitle("Second Stage");
-                    newWindow.setScene(secondScene);
-                    newWindow.show();
-                }
+        showWords.setOnAction(event->{
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("words.fxml"));
+                /*
+                 * if "fx:controller" is not set in fxml
+                 * fxmlLoader.setController(NewWindowController);
+                 */
+                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+                Stage stage = new Stage();
+                stage.setTitle("New Window");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                Logger logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+                System.out.println(13);
             }
         });
         exitButton.setOnAction(e->{
