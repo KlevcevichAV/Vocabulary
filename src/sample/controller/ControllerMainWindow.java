@@ -45,6 +45,7 @@ public class ControllerMainWindow {
                  * if "fx:controller" is not set in fxml
                  * fxmlLoader.setController(NewWindowController);
                  */
+
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
                 stage.setTitle("New Window");
