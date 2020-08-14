@@ -1,6 +1,5 @@
 package sample.base;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Word {

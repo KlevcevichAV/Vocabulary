@@ -1,24 +1,12 @@
 package sample.controller;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import sample.base.DataBase;
-import sample.base.Vocabulary;
-import sample.view.MainWindow;
-import sample.view.WordTable;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +15,7 @@ public class ControllerMainWindow {
     private Button showWords;
 
     @FXML
-    private Button exerciceButton;
+    private Button exerciseButton;
 
     @FXML
     private Button settingButton;
