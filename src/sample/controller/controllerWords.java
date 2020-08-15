@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import sample.base.DataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class controllerWords {
             selectionSet = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery("select * from Section");
             while (resultSet.next()){
-                selectionSet.add(resultSet.getString(2));
+                selectionSet.add(DataBase.databaseNameToUserNameTranslator(resultSet.getString(2)));
 //                dataBase.add(new Word(resultSet.getString(2), resultSet.getString(4), resultSet.getString(3), resultSet.getString(5), dataBase));
             }
             System.out.println("We're created database.");

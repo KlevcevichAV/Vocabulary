@@ -13,11 +13,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
-//        primaryStage.setTitle("Vocabulary");
-//        primaryStage.setScene(new Scene(root, 329, 489));
-//        primaryStage.show();
-        System.out.println(DataBase.userNameToDatabaseNameTranslator("all_worlds"));
+        Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
+        primaryStage.setTitle("Vocabulary");
+        primaryStage.setScene(new Scene(root, 329, 489));
+        primaryStage.show();
+        System.out.println(DataBase.databaseNameToUserNameTranslator("all_worlds"));
         System.out.println(DataBase.userNameToDatabaseNameTranslator("All worlds"));
     }
 
