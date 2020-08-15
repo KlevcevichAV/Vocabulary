@@ -60,7 +60,37 @@ public class DataBase {
         }
     }
 
+    public static String databaseNameToUserNameTranslator(String databaseName){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < databaseName.length(); i++){
+            if(i == 0 && (databaseName.charAt(0) >= 'a' && databaseName.charAt(0) <= 'z')){
+                sb.append(Character.toUpperCase(databaseName.charAt(0)));
+                continue;
+            }
+            if(databaseName.charAt(i) == '_'){
+                sb.append(' ');
+                continue;
+            }
+            sb.append(databaseName.charAt(i));
+        }
+        return sb.toString();
+    }
 
+    public static String userNameToDatabaseNameTranslator(String databaseName){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < databaseName.length(); i++){
+            if(i == 0 && (databaseName.charAt(0) >= 'A' && databaseName.charAt(0) <= 'Z')){
+                sb.append(Character.toLowerCase(databaseName.charAt(0)));
+                continue;
+            }
+            if(databaseName.charAt(i) == ' '){
+                sb.append('_');
+                continue;
+            }
+            sb.append(databaseName.charAt(i));
+        }
+        return sb.toString();
+    }
 
     public void addWord(Word word) throws SQLException, ClassNotFoundException {
         Connection connection = DriverManager.getConnection(url, p);

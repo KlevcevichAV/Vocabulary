@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import sample.base.Word;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,6 +69,7 @@ public class controllerWords {
             System.out.println("We're created database.");
         }
         ObservableList<String> observableArrayList = FXCollections.observableArrayList(selectionSet);
-        comboBoxSection = new ComboBox<>(observableArrayList);
+        comboBoxSection.setItems(observableArrayList);
+        comboBoxSection.setValue(observableArrayList.get(0));
     }
 }
