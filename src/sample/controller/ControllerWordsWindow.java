@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class controllerWords {
+public class ControllerWordsWindow {
 
     private String url = "jdbc:mysql://localhost:3306/vocabulary?useSSL=false";
     private Properties p;

@@ -28,7 +28,7 @@ public class ControllerMainWindow {
         showWords.setOnAction(event->{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("words.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("wordsWindow.fxml"));
                 /*
                  * if "fx:controller" is not set in fxml
                  * fxmlLoader.setController(NewWindowController);
