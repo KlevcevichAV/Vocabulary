@@ -31,7 +31,7 @@ public class DataBase {
         p.setProperty("characterEncoding", "cp1251");
     }
 
-    private String attributePreparation(String attribute) {
+    public static String attributePreparation(String attribute) {
         return '\'' + attribute + '\'';
     }
 

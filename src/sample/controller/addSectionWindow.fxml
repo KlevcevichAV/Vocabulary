@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.ControllerAddSectionWindow">
    <top>
       <Label text="Create new section" BorderPane.alignment="CENTER" />
@@ -18,9 +17,9 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
          <children>
-            <Separator prefHeight="17.0" prefWidth="350.0" />
+            <Separator prefHeight="17.0" prefWidth="350.0" visible="false" />
             <Button fx:id="addButton" mnemonicParsing="false" text="Add" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
+            <Button fx:id="closeButton" mnemonicParsing="false" text="Close" />
          </children>
          <opaqueInsets>
             <Insets />
@@ -44,8 +43,8 @@
             </VBox>
             <VBox prefHeight="234.0" prefWidth="339.0" spacing="30.0">
                <children>
-                  <TextField prefHeight="26.0" prefWidth="170.0" promptText="Name Section" />
-                  <TextArea prefHeight="189.0" prefWidth="339.0" promptText="Description" />
+                  <TextField fx:id="nameField" prefHeight="26.0" prefWidth="170.0" promptText="Name Section" />
+                  <TextArea fx:id="descriptionField" prefHeight="189.0" prefWidth="339.0" promptText="Description" />
                </children>
             </VBox>
          </children>

@@ -36,7 +36,7 @@ public class ControllerMainWindow {
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
-                stage.setTitle("New Window");
+                stage.setTitle("Words");
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException e) {

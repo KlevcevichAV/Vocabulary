@@ -37,7 +37,7 @@
                 <Button fx:id="addWordButton" mnemonicParsing="false" style="-fx-background-color: #0cff1d;" stylesheets="@../view/button.css" text="+" />
                 <Button fx:id="addWordInSection" mnemonicParsing="false" style="-fx-background-color: #1732bb;" stylesheets="@../view/button.css" text="+" />
                 <Button fx:id="closeButton" mnemonicParsing="false" style="-fx-background-color: #ff0000;" stylesheets="@../view/button.css" text="❌" />
-                <Button mnemonicParsing="false" style="-fx-background-color: #1732bb;" stylesheets="@../view/button.css" text="⟲" />
+                <Button fx:id="changeWordButton" mnemonicParsing="false" style="-fx-background-color: #1732bb;" stylesheets="@../view/button.css" text="⟲" />
                 <Button fx:id="removeWordsButton" mnemonicParsing="false" style="-fx-background-color: #ff0000;" stylesheets="@../view/button.css" text="-" />
             </children>
             <padding>

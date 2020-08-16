@@ -5,10 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import sample.base.DataBase;
 
 
-// переписать функции, чтобы добавление было как в конструкторе.
 public class Main extends Application {
 
     @Override
@@ -17,8 +15,6 @@ public class Main extends Application {
         primaryStage.setTitle("Vocabulary");
         primaryStage.setScene(new Scene(root, 329, 489));
         primaryStage.show();
-        System.out.println(DataBase.databaseNameToUserNameTranslator("all_worlds"));
-        System.out.println(DataBase.userNameToDatabaseNameTranslator("All worlds"));
     }
 
 
