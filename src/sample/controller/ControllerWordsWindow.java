@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import sample.Constant;
 import sample.base.DataBase;
 import sample.base.Word;
 
@@ -64,27 +65,22 @@ public class ControllerWordsWindow {
     }
 
     private String createTable(String nameTable) {
-        String result = "create table " + nameTable + '\n';
-        result = result +
-                "(\n" +
-                "    id int auto_increment primary key ,\n" +
-                "    wordInEn varchar(30),\n" +
-                "    wordInRu varchar(30)\n" +
-                ");";
+        String result = Constant.CREATE_TABLE + nameTable + '\n';
+        result = result + Constant.VALUES_CREATE_TABLE_SELECTIONS;
         return result;
     }
 
     private String addWord(String nameTable, Word word){
-        String result ="insert " + nameTable + "(wordInEn, wordInRu) values("
-                + DataBase.attributePreparation(word.getWordInEn()) + ", "
-                + DataBase.attributePreparation(word.getWordInRu()) + ");";
+        String result = Constant.INSERT + nameTable + Constant.ARGUMENT_INSERT
+                + DataBase.attributePreparation(word.getWordInEn()) + Constant.COMMA
+                + DataBase.attributePreparation(word.getWordInRu()) + Constant.RIGHT_PARENTHESIS;
         return result;
     }
 
     private String removeWord(String nameTable, Word word){
-        String result ="delete from " + nameTable + "where wordInEn="
-                + DataBase.attributePreparation(word.getWordInEn()) + " and wordInRu="
-                + DataBase.attributePreparation(word.getWordInRu()) + ";";
+        String result = Constant.DELETE_FROM + nameTable + Constant.WHERE + Constant.WORD_IN_EN
+                + DataBase.attributePreparation(word.getWordInEn()) + Constant.AND + Constant.WORD_IN_RU
+                + DataBase.attributePreparation(word.getWordInRu()) + Constant.SEMICOLON;
         return result;
     }
 
@@ -112,7 +108,7 @@ public class ControllerWordsWindow {
         Connection connection = DriverManager.getConnection(url, p);
         try (Statement statement = connection.createStatement()) {
             selectionSet = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery("select * from Section");
+            ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM_SECTION);
             while (resultSet.next()) {
                 selectionSet.add(DataBase.databaseNameToUserNameTranslator(resultSet.getString(2)));
 //                dataBase.add(new Word(resultSet.getString(2), resultSet.getString(4), resultSet.getString(3), resultSet.getString(5), dataBase));
@@ -142,7 +138,7 @@ public class ControllerWordsWindow {
                     comboBoxSection.setItems(selectionSetO);
                     comboBoxSection.setValue(selectionSetO.get(selectionSetO.size() - 1));
                     try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate("insert into Section (section) values (" + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)) + ");");
+                        statement.executeUpdate(Constant.INSERT_INTO_SECTION + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)) + Constant.RIGHT_PARENTHESIS);
                         statement.executeUpdate(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
                         System.out.println(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
                         System.out.println("We're added section.");
@@ -178,8 +174,8 @@ public class ControllerWordsWindow {
                     alertInfo.setContentText("You removed this section.");
                     alertInfo.showAndWait();
                     try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate("delete from Section where section =" + DataBase.attributePreparation(nameRemovedSection) + ';');
-                        statement.executeUpdate("drop table " + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection));
+                        statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(nameRemovedSection) + Constant.SEMICOLON);
+                        statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection));
                         System.out.println("We're deleted.");
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
