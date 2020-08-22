@@ -78,6 +78,10 @@ public class DataBase {
 
     public static String userNameToDatabaseNameTranslator(String databaseName){
         StringBuilder sb = new StringBuilder();
+        if(databaseName == null){
+            System.out.println("ooooooo");
+            return null;
+        }
         for(int i = 0; i < databaseName.length(); i++){
             if(i == 0 && (databaseName.charAt(0) >= 'A' && databaseName.charAt(0) <= 'Z')){
                 sb.append(Character.toLowerCase(databaseName.charAt(0)));

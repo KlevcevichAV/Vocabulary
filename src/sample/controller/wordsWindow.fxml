@@ -13,8 +13,8 @@
     <center>
         <TableView fx:id="tableWords" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="table" prefWidth="301.0" text="English" />
-                <TableColumn prefWidth="298.0" text="Russian" />
+                <TableColumn fx:id="columnEn" prefWidth="301.0" text="English" />
+                <TableColumn fx:id="columnRu" prefWidth="298.0" text="Russian" />
             </columns>
         </TableView>
     </center>

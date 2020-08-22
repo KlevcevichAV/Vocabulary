@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import sample.Constant;
 import sample.base.DataBase;
@@ -27,10 +28,13 @@ public class ControllerWordsWindow {
     private List<String> selectionSet;
 
     @FXML
-    private TableView<?> tableWords;
+    private TableView<Word> tableWords;
 
     @FXML
-    private TableColumn<?, ?> table;
+    private TableColumn<Word, String> columnEn;
+
+    @FXML
+    private TableColumn<Word, String> columnRu;
 
     @FXML
     private ComboBox<String> comboBoxSection;
@@ -103,6 +107,8 @@ public class ControllerWordsWindow {
     @FXML
     void initialize() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
+        columnEn.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInEn"));
+        columnRu.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInRu"));
         settingProperties();
         setTooltipForButtons();
         Connection connection = DriverManager.getConnection(url, p);
@@ -117,7 +123,7 @@ public class ControllerWordsWindow {
         }
         ObservableList<String> observableArrayList = FXCollections.observableArrayList(selectionSet);
         comboBoxSection.setItems(observableArrayList);
-        comboBoxSection.setValue(observableArrayList.get(0));
+//        comboBoxSection.setValue(observableArrayList.get(0));
         addSectionButton.setOnAction(event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
@@ -136,11 +142,11 @@ public class ControllerWordsWindow {
                     selectionSet.add(ControllerAddSectionWindow.nameSelection);
                     ObservableList<String> selectionSetO = FXCollections.observableArrayList(selectionSet);
                     comboBoxSection.setItems(selectionSetO);
-                    comboBoxSection.setValue(selectionSetO.get(selectionSetO.size() - 1));
+//                    comboBoxSection.setValue(selectionSetO.get(selectionSetO.size() - 1));
                     try (Statement statement = connection.createStatement()) {
                         statement.executeUpdate(Constant.INSERT_INTO_SECTION + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)) + Constant.RIGHT_PARENTHESIS);
                         statement.executeUpdate(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
-                        System.out.println(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
+//                        System.out.println(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
                         System.out.println("We're added section.");
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
@@ -175,7 +181,7 @@ public class ControllerWordsWindow {
                     alertInfo.showAndWait();
                     try (Statement statement = connection.createStatement()) {
                         statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(nameRemovedSection)) + Constant.SEMICOLON);
-                        statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection));
+                        statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection) + Constant.SEMICOLON);
                         System.out.println("We're deleted.");
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
@@ -191,6 +197,22 @@ public class ControllerWordsWindow {
                 System.out.println(3);
             } else {
                 System.out.println(4);
+            }
+        });
+        comboBoxSection.setOnAction(e->{
+            String nameSection = DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue());
+            try (Statement statement = connection.createStatement()) {
+                if(nameSection != null){
+                    ObservableList<Word> vocabulary = FXCollections.observableArrayList();
+                    ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + nameSection + Constant.SEMICOLON);
+                    while (resultSet.next()) {
+                        vocabulary.add(new Word(resultSet.getString(2), resultSet.getString(3)));
+                    }
+
+                    tableWords.setItems(vocabulary);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
         });
     }
