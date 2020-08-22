@@ -174,7 +174,7 @@ public class ControllerWordsWindow {
                     alertInfo.setContentText("You removed this section.");
                     alertInfo.showAndWait();
                     try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(nameRemovedSection) + Constant.SEMICOLON);
+                        statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(nameRemovedSection)) + Constant.SEMICOLON);
                         statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection));
                         System.out.println("We're deleted.");
                     } catch (SQLException throwables) {
