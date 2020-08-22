@@ -15,10 +15,10 @@ public class Constant {
     public static final String ALL_WORLDS_USER = "All worlds";
     public static final String ALL_WORLDS_TABLE = "all_worlds";
     public static final String CREATE_TABLE = "create table ";
-    public static final String INSERT = "insert ";
+    public static final String INSERT = "insert into ";
     public static final String INSERT_INTO_SECTION = "insert into Section (section) values";
 
-    public static final String ARGUMENT_INSERT = "(wordInEn, wordInRu) values";
+    public static final String ARGUMENT_INSERT = "(wordInEn, wordInRu) values ";
 
     public static final String VALUES = "values(";
     public static final String AND = " and ";

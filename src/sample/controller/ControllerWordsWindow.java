@@ -26,6 +26,7 @@ public class ControllerWordsWindow {
     private String url = "jdbc:mysql://localhost:3306/vocabulary?useSSL=false";
     private Properties p;
     private List<String> selectionSet;
+    private ObservableList<Word> vocabulary;
 
     @FXML
     private TableView<Word> tableWords;
@@ -203,7 +204,7 @@ public class ControllerWordsWindow {
             String nameSection = DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue());
             try (Statement statement = connection.createStatement()) {
                 if(nameSection != null){
-                    ObservableList<Word> vocabulary = FXCollections.observableArrayList();
+                    vocabulary = FXCollections.observableArrayList();
                     ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + nameSection + Constant.SEMICOLON);
                     while (resultSet.next()) {
                         vocabulary.add(new Word(resultSet.getString(2), resultSet.getString(3)));
@@ -214,6 +215,37 @@ public class ControllerWordsWindow {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        });
+        addWordButton.setOnAction(event->{
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("addWord.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+                Stage stage = new Stage();
+                stage.setTitle("Add word");
+                stage.setScene(scene);
+                stage.showAndWait();
+                if(ControllerAddWord.getCheck()){
+                    ControllerAddWord.setCheck();
+                    vocabulary.add(ControllerAddWord.getNewWord());
+                    tableWords.setItems(vocabulary);
+                    try (Statement statement = connection.createStatement()) {
+                        statement.executeUpdate(Constant.INSERT + DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue())+
+                                Constant.ARGUMENT_INSERT + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(ControllerAddWord.getNewWord().getWordInEn()) + Constant.COMMA +
+                                DataBase.attributePreparation(ControllerAddWord.getNewWord().getWordInRu()) + Constant.RIGHT_PARENTHESIS);
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            } catch (IOException e) {
+                Logger logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            }
+        });
+        closeButton.setOnAction(e->{
+            Stage stage = (Stage) closeButton.getScene().getWindow();
+            stage.close();
         });
     }
 }
