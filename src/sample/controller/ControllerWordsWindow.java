@@ -25,8 +25,12 @@ public class ControllerWordsWindow {
 
     private String url = "jdbc:mysql://localhost:3306/vocabulary?useSSL=false";
     private Properties p;
-    private List<String> selectionSet;
+    private static List<String> selectionSet;
     private ObservableList<Word> vocabulary;
+
+    public static List<String> getSelectionSet(){
+        return selectionSet;
+    }
 
     @FXML
     private TableView<Word> tableWords;
@@ -76,9 +80,9 @@ public class ControllerWordsWindow {
     }
 
     private String addWord(String nameTable, Word word){
-        String result = Constant.INSERT + nameTable + Constant.ARGUMENT_INSERT
-                + DataBase.attributePreparation(word.getWordInEn()) + Constant.COMMA
-                + DataBase.attributePreparation(word.getWordInRu()) + Constant.RIGHT_PARENTHESIS;
+        String result = Constant.INSERT + DataBase.userNameToDatabaseNameTranslator(nameTable)+
+                Constant.ARGUMENT_INSERT + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(word.getWordInEn()) + Constant.COMMA +
+                DataBase.attributePreparation(word.getWordInRu()) + Constant.RIGHT_PARENTHESIS;
         return result;
     }
 
@@ -105,6 +109,21 @@ public class ControllerWordsWindow {
         changeWordButton.setTooltip(new Tooltip("Click the button \nto change selected word"));
     }
 
+    private void disabledWordButton(boolean check){
+        removeWordsButton.setDisable(true);
+        addWordInSection.setDisable(true);
+        changeWordButton.setDisable(true);
+        if(check) addWordButton.setDisable(true);
+
+    }
+
+    private void enabledWordButton(){
+        removeWordsButton.setDisable(false);
+        addWordInSection.setDisable(false);
+        changeWordButton.setDisable(false);
+        addWordButton.setDisable(false);
+    }
+
     @FXML
     void initialize() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
@@ -112,6 +131,7 @@ public class ControllerWordsWindow {
         columnRu.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInRu"));
         settingProperties();
         setTooltipForButtons();
+        disabledWordButton(true);
         Connection connection = DriverManager.getConnection(url, p);
         try (Statement statement = connection.createStatement()) {
             selectionSet = new ArrayList<>();
@@ -204,12 +224,12 @@ public class ControllerWordsWindow {
             String nameSection = DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue());
             try (Statement statement = connection.createStatement()) {
                 if(nameSection != null){
+                    enabledWordButton();
                     vocabulary = FXCollections.observableArrayList();
                     ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + nameSection + Constant.SEMICOLON);
                     while (resultSet.next()) {
                         vocabulary.add(new Word(resultSet.getString(2), resultSet.getString(3)));
                     }
-
                     tableWords.setItems(vocabulary);
                 }
             } catch (SQLException throwables) {
@@ -247,7 +267,6 @@ public class ControllerWordsWindow {
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
         });
-
         removeWordsButton.setOnAction(e->{
             Word removedWord = tableWords.getSelectionModel().getSelectedItem();
             try (Statement statement = connection.createStatement()) {
@@ -255,6 +274,28 @@ public class ControllerWordsWindow {
                 statement.executeUpdate(removeWord(DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue()), removedWord));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            }
+        });
+        addWordInSection.setOnAction(e->{
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("addWordInSection.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+                Stage stage = new Stage();
+                stage.setTitle("Add word");
+                stage.setScene(scene);
+                stage.showAndWait();
+                if(ControllerAddWordInSection.getAdditionCheck()){
+                    try (Statement statement = connection.createStatement()) {
+                        statement.executeUpdate(addWord(ControllerAddWordInSection.getSection(), tableWords.getSelectionModel().getSelectedItem()));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            } catch (IOException ev) {
+                Logger logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
         });
     }
