@@ -23,6 +23,8 @@ public class Constant {
     public static final String VALUES = "values(";
     public static final String AND = " and ";
     public static final String WHERE = " where ";
+    public static final String UPDATE = "update ";
+    public static final String SET = " set ";
     public static final String DELETE_FROM = "delete from ";
     public static final String DELETE_FROM_SECTION = "delete from Section where section =";
     public static final String WORD_IN_RU = "wordInRu=";

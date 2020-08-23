@@ -27,6 +27,11 @@ public class ControllerWordsWindow {
     private Properties p;
     private static List<String> selectionSet;
     private ObservableList<Word> vocabulary;
+    private static Word changeWord;
+
+    public static Word getChangeWord(){
+        return changeWord;
+    }
 
     public static List<String> getSelectionSet(){
         return selectionSet;
@@ -94,8 +99,11 @@ public class ControllerWordsWindow {
     }
 
     private String changeWord(String nameTable, Word word1, Word word2){
-        String result = "";
-
+        String result = Constant.UPDATE + nameTable + Constant.SET +
+                Constant.WORD_IN_EN + DataBase.attributePreparation(word2.getWordInEn()) + Constant.COMMA +
+                Constant.WORD_IN_RU + DataBase.attributePreparation(word2.getWordInRu()) + Constant.WHERE +
+                Constant.WORD_IN_EN + DataBase.attributePreparation(word1.getWordInEn()) + Constant.AND +
+                Constant.WORD_IN_RU + DataBase.attributePreparation(word1.getWordInRu()) + Constant.SEMICOLON;
         return result;
     }
 
@@ -289,6 +297,31 @@ public class ControllerWordsWindow {
                 if(ControllerAddWordInSection.getAdditionCheck()){
                     try (Statement statement = connection.createStatement()) {
                         statement.executeUpdate(addWord(ControllerAddWordInSection.getSection(), tableWords.getSelectionModel().getSelectedItem()));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            } catch (IOException ev) {
+                Logger logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            }
+        });
+        changeWordButton.setOnAction(e->{
+            try {
+                changeWord = tableWords.getSelectionModel().getSelectedItem();
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("changeWordWindow.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+                Stage stage = new Stage();
+                stage.setTitle("Change word");
+                stage.setScene(scene);
+                stage.showAndWait();
+                if(ControllerChangeWordWindow.getCheck()){
+                    try (Statement statement = connection.createStatement()) {
+                        statement.executeUpdate(changeWord(DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue()), changeWord, ControllerChangeWordWindow.getNewWord()));
+                        vocabulary.set(vocabulary.indexOf(changeWord), ControllerChangeWordWindow.getNewWord());
+                        tableWords.setItems(vocabulary);
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     }
