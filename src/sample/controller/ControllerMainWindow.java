@@ -25,6 +25,8 @@ public class ControllerMainWindow {
 
     @FXML
     void initialize(){
+        exerciseButton.setVisible(false);
+        settingButton.setVisible(false);
         showWords.setOnAction(event->{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
