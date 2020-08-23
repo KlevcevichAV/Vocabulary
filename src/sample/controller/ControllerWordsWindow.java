@@ -247,5 +247,15 @@ public class ControllerWordsWindow {
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
         });
+
+        removeWordsButton.setOnAction(e->{
+            Word removedWord = tableWords.getSelectionModel().getSelectedItem();
+            try (Statement statement = connection.createStatement()) {
+                vocabulary.remove(removedWord);
+                statement.executeUpdate(removeWord(DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue()), removedWord));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
     }
 }
