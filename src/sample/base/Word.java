@@ -6,16 +6,6 @@ public class Word {
     private String wordInEn;
     private String wordInRu;
 
-    private Word searchWordInDatabase(String searchWord, List<Word> database) {
-        for (Word word : database) {
-            if (searchWord.equals(word.getWordInEn()) ||
-                    searchWord.equals(word.getWordInRu())) {
-                return word;
-            }
-        }
-        return null;
-    }
-
     private String copy(int begin, int end, String expression) {
         String result = "";
         StringBuilder stringBuilder = new StringBuilder(result);

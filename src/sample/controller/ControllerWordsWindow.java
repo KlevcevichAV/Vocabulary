@@ -152,11 +152,10 @@ public class ControllerWordsWindow {
         }
         ObservableList<String> observableArrayList = FXCollections.observableArrayList(selectionSet);
         comboBoxSection.setItems(observableArrayList);
-//        comboBoxSection.setValue(observableArrayList.get(0));
         addSectionButton.setOnAction(event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("addSectionWindow.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addSectionWindow.fxml"));
                 /*
                  * if "fx:controller" is not set in fxml
                  * fxmlLoader.setController(NewWindowController);
@@ -247,7 +246,7 @@ public class ControllerWordsWindow {
         addWordButton.setOnAction(event->{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("addWord.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addWord.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
@@ -287,7 +286,7 @@ public class ControllerWordsWindow {
         addWordInSection.setOnAction(e->{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("addWordInSection.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addWordInSection.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
@@ -310,7 +309,7 @@ public class ControllerWordsWindow {
             try {
                 changeWord = tableWords.getSelectionModel().getSelectedItem();
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("changeWordWindow.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/controller/changeWordWindow.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();

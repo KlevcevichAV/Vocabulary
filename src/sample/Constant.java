@@ -38,4 +38,6 @@ public class Constant {
             "wordInRu varchar(30)" +
             ");";
     public static final String DROP_TABLE = "drop table ";
+
+    public static final String ALL_WORLDS = "all_worlds";
 }
