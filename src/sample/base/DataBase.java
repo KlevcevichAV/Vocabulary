@@ -1,6 +1,7 @@
 package sample.base;
 
 import sample.Constant;
+import sample.controller.ControllerAddSectionWindow;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -102,6 +103,18 @@ public class DataBase {
         }
     }
 
+    private String createTable(String nameSection) {
+        String result = Constant.CREATE_TABLE + nameSection + '\n';
+        result = result + Constant.VALUES_CREATE_TABLE_SELECTIONS;
+        return result;
+    }
+
+    public void createSection(String nameSection) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
+            statement.executeUpdate(createTable(DataBase.userNameToDatabaseNameTranslator(nameSection)));
+        }
+    }
+
     public void deleteAllWord(Word deleteWord) throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             for (int i = 0; i < dataBase.size(); i++) {
@@ -162,8 +175,7 @@ public class DataBase {
     }
 
     public void clear() throws SQLException {
-        Connection connection = DriverManager.getConnection(url, p);
-        try (Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             statement.executeUpdate("delete from " + section + ";");
             System.out.println("Clear.");
         }
