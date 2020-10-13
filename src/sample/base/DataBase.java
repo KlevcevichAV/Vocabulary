@@ -15,6 +15,10 @@ public class DataBase {
     private String section;
     private List<String> sectionList;
 
+    public List<String> getSectionList() {
+        return sectionList;
+    }
+
     private boolean equals(Word firstWord, Word secondWord) {
         if (firstWord.getWordInEn().equals(secondWord.getWordInEn())) {
             return firstWord.getWordInRu().equals(secondWord.getWordInRu());
@@ -48,12 +52,18 @@ public class DataBase {
         this.section = section;
         Class.forName("com.mysql.jdbc.Driver");
         settingProperties();
+        sectionList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             dataBase = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + section);
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt(1));
                 dataBase.add(new Word(resultSet.getString(2), resultSet.getString(3)));
+            }
+            resultSet = statement.executeQuery(Constant.SELECT_FROM + Constant.SECTION);
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt(1));
+                this.sectionList.add(resultSet.getString(2));
             }
             System.out.println("We're created database.");
         }
@@ -97,7 +107,7 @@ public class DataBase {
 
     public void addWord(Word word) throws SQLException, ClassNotFoundException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
-            statement.executeUpdate("insert into" + section + "(wordInEn,wordInRu) values (" + attributePreparation(word.getWordInEn()) + attributePreparation(word.getWordInRu()) + ");");
+            statement.executeUpdate(Constant.INSERT + section + "(wordInEn,wordInRu) VALUES (" + attributePreparation(word.getWordInEn()) + Constant.COMMA + attributePreparation(word.getWordInRu()) + ");");
             dataBase.add(word);
             System.out.println("We're added.");
         }
@@ -109,9 +119,32 @@ public class DataBase {
         return result;
     }
 
+    private String removeSectionS(String nameSection) {
+        String result = Constant.CREATE_TABLE + nameSection + '\n';
+        return result;
+    }
+
+    public void removeSection(String nameSection) {
+        try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
+            statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(nameSection)) + Constant.SEMICOLON);
+            statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameSection) + Constant.SEMICOLON);
+            System.out.println("We're deleted.");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public void createSection(String nameSection) throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             statement.executeUpdate(createTable(DataBase.userNameToDatabaseNameTranslator(nameSection)));
+        }
+    }
+
+    private void removeWord(Word deleteWord, String section){
+        try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
+                statement.executeUpdate(Constant.DELETE_FROM + section + where(deleteWord) + Constant.SEMICOLON);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
@@ -127,14 +160,17 @@ public class DataBase {
             }
             ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + Constant.SECTION);
             while (resultSet.next()) {
-                System.out.println(resultSet.getInt(1));
                 String section = resultSet.getString(2);
-                statement.executeUpdate(Constant.DELETE_FROM + section + where(deleteWord) + Constant.SEMICOLON);
+                removeWord(deleteWord, section);
             }
         }
     }
 
     public void deleteWord(Word deleteWord) throws SQLException {
+        if (section.equals(Constant.ALL_WORLDS)) {
+            deleteAllWord(deleteWord);
+            return;
+        }
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             for (int i = 0; i < dataBase.size(); i++) {
                 if (equals(deleteWord, dataBase.get(i))) {
@@ -147,27 +183,28 @@ public class DataBase {
         }
     }
 
-    private void editAll(Word oldWord, Word newWord) throws SQLException {
+    public void editWord(Word oldWord, Word newWord, String section) throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + Constant.SECTION);
-            while (resultSet.next()) {
-                System.out.println(resultSet.getInt(1));
-                String section = resultSet.getString(2);
-                statement.executeUpdate(Constant.UPDATE + section + Constant.SET
-                        + Constant.WORD_IN_EN + attributePreparation(newWord.getWordInEn())
-                        + Constant.WORD_IN_RU + attributePreparation(newWord.getWordInRu())
-                        + where(oldWord) + Constant.SEMICOLON);
-            }
+            String execute = Constant.UPDATE + section + Constant.SET
+                    + Constant.WORD_IN_EN + attributePreparation(newWord.getWordInEn()) + Constant.COMMA
+                    + Constant.WORD_IN_RU + attributePreparation(newWord.getWordInRu())
+                    + where(oldWord) + Constant.SEMICOLON;
+            statement.executeUpdate(execute);
         }
+        return;
     }
 
-    public void editWord(Word oldWord, Word newWord) throws SQLException {
+    public void editWords(Word oldWord, Word newWord) throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
             for (int i = 0; i < dataBase.size(); i++) {
                 if (equals(oldWord, dataBase.get(i))) {
                     dataBase.set(i, newWord);
-                    editAll(oldWord, newWord);
-                    System.out.println("We're deleted.");
+                    ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + Constant.SECTION + Constant.SEMICOLON);
+                    while (resultSet.next()) {
+                        String section = resultSet.getString(2);
+                        editWord(oldWord, newWord, section);
+                    }
+                    System.out.println("We're edited.");
                     return;
                 }
             }

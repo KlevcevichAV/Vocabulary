@@ -2,6 +2,8 @@ package sample.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,17 +25,16 @@ import java.util.logging.Logger;
 
 public class ControllerWordsWindow {
 
-    private String url = "jdbc:mysql://localhost:3306/vocabulary?useSSL=false";
-    private Properties p;
     private static List<String> selectionSet;
     private ObservableList<Word> vocabulary;
     private static Word changeWord;
+    private DataBase dataBase;
 
-    public static Word getChangeWord(){
+    public static Word getChangeWord() {
         return changeWord;
     }
 
-    public static List<String> getSelectionSet(){
+    public static List<String> getSelectionSet() {
         return selectionSet;
     }
 
@@ -70,35 +71,27 @@ public class ControllerWordsWindow {
     @FXML
     private Button changeWordButton;
 
-    private void settingProperties() {
-        p = new Properties();
-        p.setProperty("user", "root");
-        p.setProperty("password", "123");
-        p.setProperty("useUnicode", "true");
-        p.setProperty("characterEncoding", "cp1251");
-    }
-
     private String createTable(String nameTable) {
         String result = Constant.CREATE_TABLE + nameTable + '\n';
         result = result + Constant.VALUES_CREATE_TABLE_SELECTIONS;
         return result;
     }
 
-    private String addWord(String nameTable, Word word){
-        String result = Constant.INSERT + DataBase.userNameToDatabaseNameTranslator(nameTable)+
+    private String addWord(String nameTable, Word word) {
+        String result = Constant.INSERT + DataBase.userNameToDatabaseNameTranslator(nameTable) +
                 Constant.ARGUMENT_INSERT + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(word.getWordInEn()) + Constant.COMMA +
                 DataBase.attributePreparation(word.getWordInRu()) + Constant.RIGHT_PARENTHESIS;
         return result;
     }
 
-    private String removeWord(String nameTable, Word word){
+    private String removeWord(String nameTable, Word word) {
         String result = Constant.DELETE_FROM + nameTable + Constant.WHERE + Constant.WORD_IN_EN
                 + DataBase.attributePreparation(word.getWordInEn()) + Constant.AND + Constant.WORD_IN_RU
                 + DataBase.attributePreparation(word.getWordInRu()) + Constant.SEMICOLON;
         return result;
     }
 
-    private String changeWord(String nameTable, Word word1, Word word2){
+    private String changeWord(String nameTable, Word word1, Word word2) {
         String result = Constant.UPDATE + nameTable + Constant.SET +
                 Constant.WORD_IN_EN + DataBase.attributePreparation(word2.getWordInEn()) + Constant.COMMA +
                 Constant.WORD_IN_RU + DataBase.attributePreparation(word2.getWordInRu()) + Constant.WHERE +
@@ -107,7 +100,7 @@ public class ControllerWordsWindow {
         return result;
     }
 
-    private void setTooltipForButtons(){
+    private void setTooltipForButtons() {
         addSectionButton.setTooltip(new Tooltip("Click the button \nto create a new section"));
         removeSectionButton.setTooltip(new Tooltip("Click the button \nto remove this section"));
         addWordButton.setTooltip(new Tooltip("Click the button \nto add new word in this section"));
@@ -117,50 +110,26 @@ public class ControllerWordsWindow {
         changeWordButton.setTooltip(new Tooltip("Click the button \nto change selected word"));
     }
 
-    private void disabledWordButton(boolean check){
+    private void disabledWordButton(boolean check) {
         removeWordsButton.setDisable(true);
         addWordInSection.setDisable(true);
         changeWordButton.setDisable(true);
-        if(check) addWordButton.setDisable(true);
+        if (check) addWordButton.setDisable(true);
 
     }
 
-    private void enabledWordButton(){
+    private void enabledWordButton() {
         removeWordsButton.setDisable(false);
         addWordInSection.setDisable(false);
         changeWordButton.setDisable(false);
         addWordButton.setDisable(false);
     }
 
-    @FXML
-    void initialize() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
-        columnEn.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInEn"));
-        columnRu.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInRu"));
-        settingProperties();
-        setTooltipForButtons();
-        disabledWordButton(true);
-        Connection connection = DriverManager.getConnection(url, p);
-        try (Statement statement = connection.createStatement()) {
-            selectionSet = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM_SECTION);
-            while (resultSet.next()) {
-                selectionSet.add(DataBase.databaseNameToUserNameTranslator(resultSet.getString(2)));
-//                dataBase.add(new Word(resultSet.getString(2), resultSet.getString(4), resultSet.getString(3), resultSet.getString(5), dataBase));
-            }
-            System.out.println("We're created database.");
-        }
-        ObservableList<String> observableArrayList = FXCollections.observableArrayList(selectionSet);
-        comboBoxSection.setItems(observableArrayList);
-        addSectionButton.setOnAction(event -> {
+    private EventHandler<ActionEvent> addSection() {
+        return event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("/sample/controller/addSectionWindow.fxml"));
-                /*
-                 * if "fx:controller" is not set in fxml
-                 * fxmlLoader.setController(NewWindowController);
-                 */
-
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
                 stage.setTitle("Add selection");
@@ -170,29 +139,22 @@ public class ControllerWordsWindow {
                     selectionSet.add(ControllerAddSectionWindow.nameSelection);
                     ObservableList<String> selectionSetO = FXCollections.observableArrayList(selectionSet);
                     comboBoxSection.setItems(selectionSetO);
-//                    comboBoxSection.setValue(selectionSetO.get(selectionSetO.size() - 1));
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(Constant.INSERT_INTO_SECTION + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)) + Constant.RIGHT_PARENTHESIS);
-                        statement.executeUpdate(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
-//                        System.out.println(createTable(DataBase.userNameToDatabaseNameTranslator(ControllerAddSectionWindow.nameSelection)));
-                        System.out.println("We're added section.");
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
+                    dataBase.createSection(ControllerAddSectionWindow.nameSelection);
+                    System.out.println("We're added section.");
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 Logger logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
-        });
-        removeSectionButton.setOnAction(e -> {
+        };
+    }
+
+    private EventHandler<ActionEvent> removeSection() {
+        return e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete section");
             alert.setHeaderText("Are you sure want to remove this section?");
-
-            // option != null.
             Optional<ButtonType> option = alert.showAndWait();
-
             if (option.get() == null) {
                 System.out.println(1);
             } else if (option.get() == ButtonType.OK) {
@@ -207,13 +169,7 @@ public class ControllerWordsWindow {
                     alertInfo.setHeaderText(null);
                     alertInfo.setContentText("You removed this section.");
                     alertInfo.showAndWait();
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(Constant.DELETE_FROM_SECTION + DataBase.attributePreparation(DataBase.userNameToDatabaseNameTranslator(nameRemovedSection)) + Constant.SEMICOLON);
-                        statement.executeUpdate(Constant.DROP_TABLE + DataBase.userNameToDatabaseNameTranslator(nameRemovedSection) + Constant.SEMICOLON);
-                        System.out.println("We're deleted.");
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
+                    dataBase.removeSection(DataBase.userNameToDatabaseNameTranslator(nameRemovedSection));
                 } else {
                     Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
                     alertInfo.setTitle("Error");
@@ -226,24 +182,28 @@ public class ControllerWordsWindow {
             } else {
                 System.out.println(4);
             }
-        });
-        comboBoxSection.setOnAction(e->{
-            String nameSection = DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue());
-            try (Statement statement = connection.createStatement()) {
-                if(nameSection != null){
+        };
+    }
+
+    private EventHandler<ActionEvent> partitionSwitch() {
+        return e -> {
+            try {
+                String nameSection = DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue());
+                if (nameSection != null) {
                     enabledWordButton();
-                    vocabulary = FXCollections.observableArrayList();
-                    ResultSet resultSet = statement.executeQuery(Constant.SELECT_FROM + nameSection + Constant.SEMICOLON);
-                    while (resultSet.next()) {
-                        vocabulary.add(new Word(resultSet.getString(2), resultSet.getString(3)));
-                    }
+                    dataBase = new DataBase(nameSection);
+                    vocabulary = FXCollections.observableArrayList(dataBase.getVocabulary());
                     tableWords.setItems(vocabulary);
                 }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            } catch (SQLException | ClassNotFoundException ee) {
+                Logger logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", ee);
             }
-        });
-        addWordButton.setOnAction(event->{
+        };
+    }
+
+    private EventHandler<ActionEvent> addWord() {
+        return event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("/sample/controller/addWord.fxml"));
@@ -253,59 +213,44 @@ public class ControllerWordsWindow {
                 stage.setTitle("Add word");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if(ControllerAddWord.getCheck()){
+                if (ControllerAddWord.getCheck()) {
                     ControllerAddWord.setCheck();
                     vocabulary.add(ControllerAddWord.getNewWord());
                     tableWords.setItems(vocabulary);
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(Constant.INSERT + DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue())+
-                                Constant.ARGUMENT_INSERT + Constant.LEFT_PARENTHESIS + DataBase.attributePreparation(ControllerAddWord.getNewWord().getWordInEn()) + Constant.COMMA +
-                                DataBase.attributePreparation(ControllerAddWord.getNewWord().getWordInRu()) + Constant.RIGHT_PARENTHESIS);
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
+                    dataBase.addWord(ControllerAddWord.getNewWord());
                 }
             } catch (IOException e) {
                 Logger logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        });
-        closeButton.setOnAction(e->{
+        };
+    }
+
+    private EventHandler<ActionEvent> close() {
+        return e -> {
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
-        });
-        removeWordsButton.setOnAction(e->{
+        };
+    }
+
+    private EventHandler<ActionEvent> removeWord() {
+        return e -> {
             Word removedWord = tableWords.getSelectionModel().getSelectedItem();
-            try (Statement statement = connection.createStatement()) {
+            try {
                 vocabulary.remove(removedWord);
-                statement.executeUpdate(removeWord(DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue()), removedWord));
+                dataBase.deleteWord(removedWord);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        });
-        addWordInSection.setOnAction(e->{
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addWordInSection.fxml"));
+        };
+    }
 
-                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-                Stage stage = new Stage();
-                stage.setTitle("Add word");
-                stage.setScene(scene);
-                stage.showAndWait();
-                if(ControllerAddWordInSection.getAdditionCheck()){
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(addWord(ControllerAddWordInSection.getSection(), tableWords.getSelectionModel().getSelectedItem()));
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
-                }
-            } catch (IOException ev) {
-                Logger logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.SEVERE, "Failed to create new Window.", e);
-            }
-        });
-        changeWordButton.setOnAction(e->{
+    private EventHandler<ActionEvent> changeWordButton() {
+        return e -> {
             try {
                 changeWord = tableWords.getSelectionModel().getSelectedItem();
                 FXMLLoader fxmlLoader = new FXMLLoader();
@@ -316,10 +261,9 @@ public class ControllerWordsWindow {
                 stage.setTitle("Change word");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if(ControllerChangeWordWindow.getCheck()){
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate(changeWord(DataBase.userNameToDatabaseNameTranslator(comboBoxSection.getValue()), changeWord, ControllerChangeWordWindow.getNewWord()));
-                        vocabulary.set(vocabulary.indexOf(changeWord), ControllerChangeWordWindow.getNewWord());
+                if (ControllerChangeWordWindow.getCheck()) {
+                    try {
+                        dataBase.editWords(changeWord, ControllerChangeWordWindow.getNewWord());
                         tableWords.setItems(vocabulary);
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
@@ -329,6 +273,26 @@ public class ControllerWordsWindow {
                 Logger logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
-        });
+        };
+    }
+
+    @FXML
+    void initialize() throws SQLException, ClassNotFoundException {
+        columnEn.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInEn"));
+        columnRu.setCellValueFactory(new PropertyValueFactory<Word, String>("wordInRu"));
+        setTooltipForButtons();
+        disabledWordButton(true);
+        dataBase = new DataBase("all_worlds");
+        selectionSet = dataBase.getSectionList();
+        ObservableList<String> observableArrayList = FXCollections.observableArrayList(selectionSet);
+        comboBoxSection.setItems(observableArrayList);
+        addSectionButton.setOnAction(addSection());
+        removeSectionButton.setOnAction(removeSection());
+        comboBoxSection.setOnAction(partitionSwitch());
+        addWordButton.setOnAction(addWord());
+        closeButton.setOnAction(close());
+        removeWordsButton.setOnAction(removeWord());
+//        addWordInSection.setOnAction(addWordInSection());
+        changeWordButton.setOnAction(changeWordButton());
     }
 }
