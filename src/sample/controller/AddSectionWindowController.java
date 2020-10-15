@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 import java.sql.SQLException;
 
-public class ControllerAddSectionWindow {
+public class AddSectionWindowController {
 
     public static String nameSelection;
 

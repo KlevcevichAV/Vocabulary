@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ControllerMainWindow {
+public class MainWindowController {
     @FXML
     private Button showWords;
 
@@ -30,7 +30,7 @@ public class ControllerMainWindow {
         showWords.setOnAction(event->{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/sample/controller/wordsWindow.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/view/wordsWindow.fxml"));
                 /*
                  * if "fx:controller" is not set in fxml
                  * fxmlLoader.setController(NewWindowController);

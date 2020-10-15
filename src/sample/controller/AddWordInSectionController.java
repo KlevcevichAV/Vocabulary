@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 import java.sql.SQLException;
 
-public class ControllerAddWordInSection {
+public class AddWordInSectionController {
 
     private static boolean additionCheck;
     private static String section;
@@ -34,7 +34,7 @@ public class ControllerAddWordInSection {
     @FXML
     void initialize() throws SQLException, ClassNotFoundException {
         additionCheck = false;
-        ObservableList<String> observableArrayList = FXCollections.observableArrayList(ControllerWordsWindow.getSelectionSet());
+        ObservableList<String> observableArrayList = FXCollections.observableArrayList(WordsWindowController.getSelectionSet());
         comboBoxSection.setItems(observableArrayList);
         cancelButton.setOnAction(e->{
             additionCheck = false;

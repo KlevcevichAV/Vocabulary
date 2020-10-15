@@ -8,7 +8,7 @@ import sample.base.Word;
 
 import java.sql.SQLException;
 
-public class ControllerChangeWordWindow {
+public class ChangeWordWindowController {
 
     private static Word newWord;
     private static boolean check;
@@ -40,8 +40,8 @@ public class ControllerChangeWordWindow {
     @FXML
     void initialize() throws SQLException, ClassNotFoundException {
         check = false;
-        textFieldEn.setText(ControllerWordsWindow.getChangeWord().getWordInEn());
-        textFieldRu.setText(ControllerWordsWindow.getChangeWord().getWordInRu());
+        textFieldEn.setText(WordsWindowController.getChangeWord().getWordInEn());
+        textFieldRu.setText(WordsWindowController.getChangeWord().getWordInRu());
         buttonAdd.setOnAction(e->{
             check = true;
             newWord = new Word(textFieldEn.getText(), textFieldRu.getText());

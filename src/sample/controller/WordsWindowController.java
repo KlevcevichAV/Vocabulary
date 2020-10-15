@@ -16,14 +16,12 @@ import sample.base.Word;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ControllerWordsWindow {
+public class WordsWindowController {
 
     private static List<String> selectionSet;
     private ObservableList<Word> vocabulary;
@@ -129,17 +127,17 @@ public class ControllerWordsWindow {
         return event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addSectionWindow.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/view/addSectionWindow.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
                 stage.setTitle("Add selection");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if (!ControllerAddSectionWindow.nameSelection.isEmpty()) {
-                    selectionSet.add(ControllerAddSectionWindow.nameSelection);
+                if (!AddSectionWindowController.nameSelection.isEmpty()) {
+                    selectionSet.add(AddSectionWindowController.nameSelection);
                     ObservableList<String> selectionSetO = FXCollections.observableArrayList(selectionSet);
                     comboBoxSection.setItems(selectionSetO);
-                    dataBase.createSection(ControllerAddSectionWindow.nameSelection);
+                    dataBase.createSection(AddSectionWindowController.nameSelection);
                     System.out.println("We're added section.");
                 }
             } catch (IOException | SQLException e) {
@@ -206,18 +204,18 @@ public class ControllerWordsWindow {
         return event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/sample/controller/addWord.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/view/addWord.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
                 stage.setTitle("Add word");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if (ControllerAddWord.getCheck()) {
-                    ControllerAddWord.setCheck();
-                    vocabulary.add(ControllerAddWord.getNewWord());
+                if (AddWordController.getCheck()) {
+                    AddWordController.setCheck();
+                    dataBase.addWord(AddWordController.getNewWord());
+                    vocabulary = FXCollections.observableArrayList(dataBase.getVocabulary());
                     tableWords.setItems(vocabulary);
-                    dataBase.addWord(ControllerAddWord.getNewWord());
                 }
             } catch (IOException e) {
                 Logger logger = Logger.getLogger(getClass().getName());
@@ -254,16 +252,16 @@ public class ControllerWordsWindow {
             try {
                 changeWord = tableWords.getSelectionModel().getSelectedItem();
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/sample/controller/changeWordWindow.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/sample/view/changeWordWindow.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load(), 600, 400);
                 Stage stage = new Stage();
                 stage.setTitle("Change word");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if (ControllerChangeWordWindow.getCheck()) {
+                if (ChangeWordWindowController.getCheck()) {
                     try {
-                        dataBase.editWords(changeWord, ControllerChangeWordWindow.getNewWord());
+                        dataBase.editWords(changeWord, ChangeWordWindowController.getNewWord());
                         tableWords.setItems(vocabulary);
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();

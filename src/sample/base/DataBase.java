@@ -1,7 +1,6 @@
 package sample.base;
 
 import sample.Constant;
-import sample.controller.ControllerAddSectionWindow;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -105,9 +104,21 @@ public class DataBase {
         return sb.toString();
     }
 
+    private boolean searchWord(Word word){
+        for(Word wordTemp : dataBase){
+            if(equals(word, wordTemp)) return true;
+        }
+        return false;
+    }
+
     public void addWord(Word word) throws SQLException, ClassNotFoundException {
         try (Connection connection = DriverManager.getConnection(url, p); Statement statement = connection.createStatement()) {
+            if(searchWord(word)) return;
             statement.executeUpdate(Constant.INSERT + section + "(wordInEn,wordInRu) VALUES (" + attributePreparation(word.getWordInEn()) + Constant.COMMA + attributePreparation(word.getWordInRu()) + ");");
+            if(!Constant.ALL_WORLDS.equals(section)){
+                DataBase tempBase = new DataBase(Constant.ALL_WORLDS);
+                tempBase.addWord(word);
+            }
             dataBase.add(word);
             System.out.println("We're added.");
         }

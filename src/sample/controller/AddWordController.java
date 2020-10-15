@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import sample.base.Word;
 
-public class ControllerAddWord {
+public class AddWordController {
 
     private static Word newWord;
 
