@@ -262,6 +262,7 @@ public class WordsWindowController {
                 if (ChangeWordWindowController.getCheck()) {
                     try {
                         dataBase.editWords(changeWord, ChangeWordWindowController.getNewWord());
+                        vocabulary = FXCollections.observableArrayList(dataBase.getVocabulary());
                         tableWords.setItems(vocabulary);
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
