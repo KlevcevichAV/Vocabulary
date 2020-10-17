@@ -133,7 +133,7 @@ public class WordsWindowController {
                 stage.setTitle("Add selection");
                 stage.setScene(scene);
                 stage.showAndWait();
-                if (!AddSectionWindowController.nameSelection.isEmpty()) {
+                if (!AddSectionWindowController.nameSelection.equals("")) {
                     selectionSet.add(AddSectionWindowController.nameSelection);
                     ObservableList<String> selectionSetO = FXCollections.observableArrayList(selectionSet);
                     comboBoxSection.setItems(selectionSetO);

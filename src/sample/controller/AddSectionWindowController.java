@@ -29,6 +29,7 @@ public class AddSectionWindowController {
 
     @FXML
     void initialize() {
+        nameSelection = "";
         closeButton.setOnAction(e->{
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
@@ -37,7 +38,7 @@ public class AddSectionWindowController {
         addButton.setOnAction(e->{
             nameSelection = nameField.getText();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            if(nameSelection.isEmpty()){
+            if(nameSelection.equals("")){
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
                 alert.setContentText("You did not enter a section name.");
