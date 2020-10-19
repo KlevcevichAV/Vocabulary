@@ -4,8 +4,12 @@ Sorry for the lack of design, someday it will appear :)
 
 And here's an example of how it works:
 
-+ ![Main window](./example/mainWindow.png)
-+ ![Words window](./example/example.gif)
++ Main window 
+
+![](./example/mainWindow.png)
++ Words window
+
+![](./example/example.gif)
 
 
 What's in the next version:
